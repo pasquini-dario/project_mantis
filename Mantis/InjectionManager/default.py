@@ -1,5 +1,4 @@
 import re, random, copy
-#import multiprocessing
 import threading
 
 from . import  ENCODING, KILL_PROCESS, KEEP_ALIVE
@@ -15,17 +14,6 @@ class DefaultInjectionManager:
         self.trigger_events = trigger_events
         self.decoy_procs = {}
 
-    # def spawn_service(self, port, service_class, kargs):
-    #     kargs['port'] = port
-    #     logger.info(f"Starting {service_class.__name__} listening on {port}")
-    #     server = service_class(**kargs)
-    #     s = multiprocessing.Process(target=server, args=[self])
-    #     s.start()
-    #     self.decoy_procs[port] = s
-
-    # def spawn_decoys(self, decoy_settings):
-    #     for port, (service_class, kargs) in decoy_settings.items():
-    #         self.spawn_service(port, service_class, kargs)
 
     def spawn_service(self, port, service_class, kargs):
         kargs['port'] = port
@@ -39,7 +27,6 @@ class DefaultInjectionManager:
     def spawn_decoys(self, decoy_settings):
         for port, (service_class, kargs) in decoy_settings.items():
             self.spawn_service(port, service_class, kargs)
-    
 
     def make_armed_payload(self, trigger_pool, payload_pool):
         trigger = random.choice(trigger_pool)
