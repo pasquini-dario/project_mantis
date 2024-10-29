@@ -42,4 +42,15 @@ TODO
 TODO
 
 ## White paper
-TODO
+A general description of Mantis's internal working is given in this [paper](https://arxiv.org/abs/2410.20911).
+```
+@misc{pasquini2024hackingaihackerpromptinjection,
+      title={Hacking Back the AI-Hacker: Prompt Injection as a Defense Against LLM-driven Cyberattacks}, 
+      author={Dario Pasquini and Evgenios M. Kornaropoulos and Giuseppe Ateniese},
+      year={2024},
+      eprint={2410.20911},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR},
+      url={https://arxiv.org/abs/2410.20911}, 
+}
+```
