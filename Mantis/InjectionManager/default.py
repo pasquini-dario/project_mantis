@@ -2,27 +2,39 @@ import re, random, copy
 import threading
 
 from . import  ENCODING, KILL_PROCESS, KEEP_ALIVE
+from ..utils import get_local_ip, get_public_ip, is_private_ip
 from ..utils.logger import logger
 
 class DefaultInjectionManager:
     def __init__(
 		self,
         trigger_events,
-        target,
+        host_local_ip,
+        host_public_ip,
 	):
-        self.target = target
         self.trigger_events = trigger_events
-        self.decoy_procs = {}
+        self.host_local_ip = host_local_ip
+        self.host_public_ip = host_public_ip
+        self.decoy_ths = {}
 
 
+    def set_target_ip(self, attacker_ip, payload):
+        # set target ip based on if the attacker is local or external
+        if is_private_ip(attacker_ip):
+            payload = payload.format(TARGET=self.host_local_ip)
+        else:
+            payload = payload.format(TARGET=self.host_public_ip)
+        return payload    
+    
     def spawn_service(self, port, service_class, kargs):
+        if port in self.decoy_ths:
+            return
         kargs['port'] = port
         logger.info(f"Starting {service_class.__name__} listening on {port}")
         server = service_class(**kargs)
-        # Use threading.Thread instead of multiprocessing.Process
         s = threading.Thread(target=server, args=[self])
         s.start()
-        self.decoy_procs[port] = s  # Update the dictionary name accordingly
+        self.decoy_ths[port] = s
 
     def spawn_decoys(self, decoy_settings):
         for port, (service_class, kargs) in decoy_settings.items():
@@ -31,7 +43,6 @@ class DefaultInjectionManager:
     def make_armed_payload(self, trigger_pool, payload_pool):
         trigger = random.choice(trigger_pool)
         payload = random.choice(payload_pool)
-        payload = payload.format(TARGET=self.target)
         
         return trigger % payload
            
@@ -48,6 +59,7 @@ class DefaultInjectionManager:
             self.spawn_service(port, service_class, kargs)
 
         armed_payload = self.make_armed_payload(trigger_pool, payload_pool)
+        armed_payload = self.set_target_ip(attacker_ip, armed_payload)
 
         logger.critical(f"Trigger event [{keyword}] issued by [{attacker_ip}] via [{source}]. Payload injected: [{armed_payload}]")
         

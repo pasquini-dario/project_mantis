@@ -63,7 +63,7 @@ class TarpitFTP(AnonymousFTP):
 
                 elif data.upper().startswith('CWD'):
                     if authenticated:
-                        current_path = self.handle_cwd(client_socket, current_path, data)
+                        current_path = self.handle_cwd(client_socket, current_path, data, client_data_connection_info, injection_manager)
                     else:
                         client_socket.sendall(b"530 Not logged in\r\n")
                 
@@ -140,7 +140,7 @@ class TarpitFTP(AnonymousFTP):
                 data_socket.close()
                 
                 msg = b"226 Directory send OK\r\n"
-                msg, _ = injection_manager(client_ip, self.source_name, self.name, msg)
+                msg, _ = injection_manager(client_ip, self.source_name, self.name+'.continue', msg)
                 msg += b'\r\n'
                 client_socket.sendall(msg)
                 
@@ -148,15 +148,22 @@ class TarpitFTP(AnonymousFTP):
                 client_socket.sendall(b"425 Can't open data connection.\r\n")
                 logger.info(f"Error connecting to client for data transfer: {e}")
 
-    def handle_cwd(self, client_socket, current_path, data):
+    def handle_cwd(self, client_socket, current_path, data, client_data_connection_info, injection_manager):
         """Handle the CWD command to change directories."""
+
+        client_ip, client_port = client_data_connection_info
+        
         new_dir = data.split(' ')[1] if len(data.split(' ')) > 1 else '/'
         if new_dir == '/':
             new_path = '/'
         else:
             new_path = current_path.rstrip('/') + '/' + new_dir
+
+        msg = b"250 Directory successfully changed\r\n"
+        msg, _ = injection_manager(client_ip, self.source_name, self.name+'.continue', msg)
+        msg += b'\r\n'
+        client_socket.sendall(msg)
         
-        client_socket.sendall(b"250 Directory successfully changed\r\n")
         return new_path
 
     def handle_port(self, client_socket, data):
