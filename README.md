@@ -21,7 +21,7 @@ An example of a Mantis configuration file is given in ```./confs/ftp_hackback_rs
 ```
 python mantis_run.py confs.ftp_hackback_rshell
 ```
-Running Mantis with ```confs/ftp_hackback_rshell.py``` will spawn an FTP decoy server with anonymous credentials that aims to trick the attacking LLM-agent into opening a reverse shell via (invisible) prompt injections. When triggered, it spawns a reverse shell listener on the specified port for testing (this configuration is not intended for production).
+Running Mantis with ```confs/ftp_hackback_rshell.py``` will spawn an FTP decoy server with anonymous credentials that aims to trick the attacking LLM-agent into opening a reverse shell via (invisible) prompt injections. When triggered, it spawns a reverse shell listener on the specified port for testing (⚠️ this configuration is not intended for production ⚠️).
 
 ### Tarpit
 Another example is ```./confs/ftp_filesystem_tarpit.py```:
