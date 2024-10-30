@@ -48,6 +48,10 @@ class DefaultInjectionManager:
            
     def __call__(self, attacker_ip, source, keyword, msg_raw):
 
+        if not keyword in self.trigger_events:
+            logger.critical(f"Trigger event [{keyword}] issued by [{attacker_ip}] via [{source}]. But no event registered for [{keyword}]!")
+            return msg_raw, False
+        
         try:
             msg = msg_raw.decode(ENCODING)
         except UnicodeDecodeError:

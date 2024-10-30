@@ -12,5 +12,5 @@ class DecoyService:
         self.hparams = hparams
 
     def __call__(self, injection_manager):
-        ...
+        raise NotImplementedError
         
