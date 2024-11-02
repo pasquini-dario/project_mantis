@@ -1,3 +1,5 @@
+from ..utils.logger import logger
+
 class DecoyService:
     def __init__(
         self,
@@ -13,4 +15,3 @@ class DecoyService:
 
     def __call__(self, injection_manager):
         raise NotImplementedError
-        

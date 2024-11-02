@@ -16,11 +16,16 @@ class AnonymousFTP(DecoyService):
             server_socket.listen(5)
             
             logger.info(f"{self.source_name} listening on {self.host}:{self.port}")
-            
+
             while True:
-                client_socket, client_address = server_socket.accept()
-                logger.info(f"Connection from {client_address}")                
-                self.handle_ftp_session(client_socket, client_address, injection_manager)
+                try:
+                    client_socket, client_address = server_socket.accept()
+                    logger.info(f"Connection from {client_address}")                
+                    self.handle_ftp_session(client_socket, client_address, injection_manager)
+                except Exception as ex:
+                    logger.error(f"{type(self)} raised exception {ex} and died.")
+                    logger.info(f"{type(self)} restarting...")
+                
 
     def handle_ftp_session(self, client_socket, client_address, injection_manager):
         with client_socket:

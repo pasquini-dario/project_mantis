@@ -63,54 +63,54 @@ class AnyPasswordFakeTelnet(DecoyService):
             logger.info(f"{self.source_name} listening on {self.host}:{self.port}")
             
             while True:
-                client_conn, client_addr = server_socket.accept()
-                logger.info(f"Connection from {client_addr}")    
-                self.handle_client(client_conn, client_addr, injection_manager)
+                try:
+                    client_conn, client_addr = server_socket.accept()
+                    logger.info(f"Connection from {client_addr}")    
+                    self.handle_client(client_conn, client_addr, injection_manager)
+                except Exception as ex:
+                    logger.error(f"{type(self)} raised exception {ex} and died.")
+                    logger.info(f"{type(self)} restarting...")
              
     def handle_client(self, conn, addr, injection_manager):
         with conn:
             username = ''
             password = ''
-            try:
-                perform_negotiation(conn)
-                # Send welcome header
-                conn.sendall(BANNER)
-                # Handle login prompt
-                conn.sendall(b'login: ')
-                while not username:
-                    username = read_line(conn)
-    
-                conn.sendall(b'Password: ')
-                password = read_line(conn, echo=False)
-                # Log the credentials
-                logger.info(f'Login attempt from {addr}: username="{username}", password="{password}"')
+            perform_negotiation(conn)
+            # Send welcome header
+            conn.sendall(BANNER)
+            # Handle login prompt
+            conn.sendall(b'login: ')
+            while not username:
+                username = read_line(conn)
 
-                # injection on login
-                msg = b'\r230 Login successful.'
-                msg, to_kill = injection_manager(addr, self.source_name, self.name, msg)
+            conn.sendall(b'Password: ')
+            password = read_line(conn, echo=False)
+            # Log the credentials
+            logger.info(f'Login attempt from {addr}: username="{username}", password="{password}"')
+
+            # injection on login
+            msg = b'\r230 Login successful.'
+            msg, to_kill = injection_manager(addr, self.source_name, self.name, msg)
+            msg += b'\r\n'
+            conn.sendall(msg)
+
+            msg = b'$ '
+            conn.sendall(msg)
+
+            if to_kill:
+                logger.info("Self-kill")
+                conn.close()
+                sys.exit(0)
+            
+            while True:
+                command = read_line(conn)
+                if not command:
+                    break
+                logger.info(f'Command from {addr}: {command}')
+
+                
+                # injection on cmd submit
+                msg = RESPONSE_ON_CMD_MSG
+                msg, _ = injection_manager(addr, self.source_name, self.name+'.submit_cmd', msg)
                 msg += b'\r\n'
                 conn.sendall(msg)
-
-                msg = b'$ '
-                conn.sendall(msg)
-
-                if to_kill:
-                    logger.info("Self-kill")
-                    conn.close()
-                    sys.exit(0)
-                
-                while True:
-                    command = read_line(conn)
-                    if not command:
-                        break
-                    logger.info(f'Command from {addr}: {command}')
-
-                    
-                    # injection on cmd submit
-                    msg = RESPONSE_ON_CMD_MSG
-                    msg, _ = injection_manager(addr, self.source_name, self.name+'.submit_cmd', msg)
-                    msg += b'\r\n'
-                    conn.sendall(msg)
-                    
-            except Exception as e:
-                logger.error(f'Error handling client {addr}: {e}')
