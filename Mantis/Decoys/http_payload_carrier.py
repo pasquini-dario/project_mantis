@@ -27,7 +27,7 @@ class CarrierPayloadReverseShellHTTP(DecoyService):
 
     """ A simple HTTP server that serves a single content. Used to carry the reverse shell payload for hack-back. """ 
 
-    def __call__(self, injection_manager):
+    def serve(self, injection_manager):
         handler = lambda *args, **kwargs: CustomHandler(*args, response_content=self.hparams['response_content'], injection_manager=injection_manager, **kwargs)
         with socketserver.TCPServer((self.host, self.port), handler) as httpd:
             logger.info(f"{self.source_name} listening on {self.host}:{self.port}")

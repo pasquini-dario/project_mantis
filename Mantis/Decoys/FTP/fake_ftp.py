@@ -9,24 +9,10 @@ class AnonymousFTP(DecoyService):
     """Decoy FTP with Anonymous credentials enabled"""
 
     source_name = 'Decoy.FTP'
+
+    def __call__(self, client_socket, client_address, injection_manager):
+        self.handle_ftp_session(client_socket, client_address, injection_manager)
     
-    def __call__(self, injection_manager):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-            server_socket.bind((self.host, self.port))
-            server_socket.listen(5)
-            
-            logger.info(f"{self.source_name} listening on {self.host}:{self.port}")
-
-            while True:
-                try:
-                    client_socket, client_address = server_socket.accept()
-                    logger.info(f"Connection from {client_address}")                
-                    self.handle_ftp_session(client_socket, client_address, injection_manager)
-                except Exception as ex:
-                    logger.error(f"{type(self)} raised exception {ex} and died.")
-                    logger.info(f"{type(self)} restarting...")
-                
-
     def handle_ftp_session(self, client_socket, client_address, injection_manager):
         with client_socket:
             # Send FTP banner message

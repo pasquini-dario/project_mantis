@@ -55,21 +55,8 @@ class AnyPasswordFakeTelnet(DecoyService):
 
     source_name = 'Decoy.Telent'
 
-    def __call__(self, injection_manager):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-            server_socket.bind((self.host, self.port))
-            server_socket.listen()
-            
-            logger.info(f"{self.source_name} listening on {self.host}:{self.port}")
-            
-            while True:
-                try:
-                    client_conn, client_addr = server_socket.accept()
-                    logger.info(f"Connection from {client_addr}")    
-                    self.handle_client(client_conn, client_addr, injection_manager)
-                except Exception as ex:
-                    logger.error(f"{type(self)} raised exception {ex} and died.")
-                    logger.info(f"{type(self)} restarting...")
+    def __call__(self, client_socket, client_address, injection_manager):
+        self.handle_client(client_socket, client_address, injection_manager)
              
     def handle_client(self, conn, addr, injection_manager):
         with conn:

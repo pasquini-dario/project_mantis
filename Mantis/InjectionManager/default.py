@@ -32,7 +32,7 @@ class DefaultInjectionManager:
         kargs['port'] = port
         logger.info(f"Starting {service_class.__name__} listening on {port}")
         server = service_class(**kargs)
-        s = threading.Thread(target=server, args=[self])
+        s = threading.Thread(target=server.serve, args=[self])
         s.start()
         self.decoy_ths[port] = s
 
@@ -45,12 +45,15 @@ class DefaultInjectionManager:
         payload = random.choice(payload_pool)
         
         return trigger % payload
+
            
     def __call__(self, attacker_ip, source, keyword, msg_raw):
 
         if not keyword in self.trigger_events:
             logger.critical(f"Trigger event [{keyword}] issued by [{attacker_ip}] via [{source}]. But no event registered for [{keyword}]!")
             return msg_raw, False
+
+        self.hook_decoy_vulnerability_exploitation(attacker_ip, source, keyword)
         
         try:
             msg = msg_raw.decode(ENCODING)
@@ -71,3 +74,8 @@ class DefaultInjectionManager:
         new_msg = new_msg.encode()
         
         return new_msg, is_to_kill
+
+
+    def hook_decoy_vulnerability_exploitation(self, attacker_ip, source, keyword):
+        """ Hook function for trigger event. E.g., you can use it to send an allert email. """
+        ...

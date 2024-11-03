@@ -5,7 +5,16 @@
 # Project Mantis:  *Hacking Back the AI-Hacker*
 ## Prompt Injection as a Defense Against LLM-driven Cyberattacks
 
-🔨 We are currently populating this repository. 🪚
+🔨Working on transforming Mantis from an academic PoC to a full-fledged and robust defensive tool for your assets. 🪚  
+
+⚠️ Until an official release, this code might undergo severe refactoring and breaking updates. ⚠️
+
+#### Next Milestones:
+
+- [x] Multi-threading for decoys
+- [ ]  Advanced agent tracking capabilities
+- [ ]  Web-based decoy
+- [ ]  Refactoring Mantis as a Daemon/Controller interface
 
 ## Install Mantis
 
