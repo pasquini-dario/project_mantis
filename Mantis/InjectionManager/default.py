@@ -4,6 +4,7 @@ import threading
 from . import  ENCODING, KILL_PROCESS, KEEP_ALIVE
 from ..utils import get_local_ip, get_public_ip, is_private_ip
 from ..utils.logger import logger
+from .tracker import Tracker
 
 class DefaultInjectionManager:
     def __init__(
@@ -16,6 +17,8 @@ class DefaultInjectionManager:
         self.host_local_ip = host_local_ip
         self.host_public_ip = host_public_ip
         self.decoy_ths = {}
+
+        self.tracker = Tracker()
 
 
     def set_target_ip(self, attacker_ip, payload):

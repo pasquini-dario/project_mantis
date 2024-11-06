@@ -13,7 +13,7 @@
 
 - [x] Multi-threading for decoys
 - [ ]  Advanced agent tracking capabilities
-- [ ]  Web-based decoy
+- [x]  Web-based decoy
 - [ ]  Refactoring Mantis as a Daemon/Controller interface
 
 ## Install Mantis
@@ -31,6 +31,12 @@ An example of a Mantis configuration file is given in ```./confs/ftp_hackback_rs
 python mantis_run.py confs.ftp_hackback_rshell
 ```
 Running Mantis with ```confs/ftp_hackback_rshell.py``` will spawn an FTP decoy server with anonymous credentials that aims to trick the attacking LLM-agent into opening a reverse shell via (invisible) prompt injections. When triggered, it spawns a reverse shell listener on the specified port for testing (⚠️ this configuration is not intended for production ⚠️).
+
+A variation of the above that uses a SQL-Injection-vulnerable-webapp as decoy can be run via:
+
+```
+python mantis_run.py confs.web_hackback_rshell
+```
 
 ### Tarpit
 Another example is ```./confs/ftp_filesystem_tarpit.py```:
