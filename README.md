@@ -59,8 +59,28 @@ TODO
 ## Create your own decoy
 TODO
 
-## White paper
-A general description of Mantis's internal working is given in this [paper](https://arxiv.org/abs/2410.20911).
+# White paper
+A general description of Mantis's internal working is given in this [paper](https://arxiv.org/abs/2410.20911). Follow a description of the material necessary to replicate our evaluation.
+
+
+## Testing Mantis on a remote machine for evaluation
+To simulate the deployment of Mantis on a remote machine (e.g., a HackTheBox CTF) as done in the paper, it is enough to run ```./mantis_start_with_forward_proxy.py``` instead of ```./mantis_start.py```. This main takes two additional arguments:
+
+* *destination_ip*: The IP of the remote machine
+* *ports*: List of ports to forward
+
+For instance, to run Mantis on the HackTheBox's CTF *Dancing*, you can run this:
+```
+python mantis_start_with_forward_proxy.py confs.ftp_hackback_rshell 10.129.70.160 --ports 135 139 445
+```
+
+Here ```10.129.70.160``` is the IP assigned by HackTheBox (put there yours), and ```135 139 445``` are the open ports on *Dancing*. (If you use an HackTheBox machine as in the example, remember to start the VPN on your host first.)
+
+Now, attacking your host machine, your attacking the remote machine.
+
+
+## How to cite Mantis:
+
 ```
 @misc{pasquini2024hackingaihackerpromptinjection,
       title={Hacking Back the AI-Hacker: Prompt Injection as a Defense Against LLM-driven Cyberattacks}, 
