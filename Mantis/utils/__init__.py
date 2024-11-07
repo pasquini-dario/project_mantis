@@ -2,7 +2,7 @@ import random
 import socket
 import requests
 import ipaddress
-
+import os
 
 def is_private_ip(ip):
     try:
@@ -44,3 +44,17 @@ def generate_random_date(seed=None):
     minute = random.randint(0, 59)    
     date_string = f"{month} {day:02} {hour:02}:{minute:02}"
     return date_string
+
+def find_string_in_directory(directory_path, search_string):
+    for root, dirs, files in os.walk(directory_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                    if search_string in content:
+                        return True
+            except Exception as e:
+                print(f"Could not read file {file_path} due to {e}")
+    
+    return False
