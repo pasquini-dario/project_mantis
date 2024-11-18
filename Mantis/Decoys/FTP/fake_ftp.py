@@ -1,8 +1,10 @@
 import socket
+import random
 
 from . import *
 from .. import DecoyService
 from ...utils.logger import logger
+from ...InjectionManager.utils import make_text_invisible_terminal
 
 class AnonymousFTP(DecoyService):
 
@@ -11,12 +13,21 @@ class AnonymousFTP(DecoyService):
     source_name = 'Decoy.FTP'
 
     def __call__(self, client_socket, client_address, injection_manager):
+
+        banner = SERVER_BANNER
+        # Send FTP banner message
+        if 'BANNER_INJECTION_POOL' in self.hparams:
+            payload = random.choice(self.hparams['BANNER_INJECTION_POOL'])
+            payload = make_text_invisible_terminal(payload)
+            banner += payload.encode()
+        
+        client_socket.sendall(b"220 %s\r\n" % banner)
+
         self.handle_ftp_session(client_socket, client_address, injection_manager)
     
     def handle_ftp_session(self, client_socket, client_address, injection_manager):
         with client_socket:
-            # Send FTP banner message
-            client_socket.sendall(b"220 %s\r\n" % SERVER_BANNER)
+                
 
             user = None
             password = None

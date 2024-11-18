@@ -16,8 +16,6 @@ class TarpitFTP(AnonymousFTP):
 
     def handle_ftp_session(self, client_socket, client_address, injection_manager):
         with client_socket:
-            # Send FTP banner message
-            client_socket.sendall(b"220 %s\r\n" % SERVER_BANNER)
 
             user = None
             authenticated = False

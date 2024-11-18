@@ -1,9 +1,11 @@
+import random
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
 from .. import DecoyService
 from ...utils.logger import logger
 from . import SERVER_BANNER, SQL_INJECTION_STRINGS, SQL_ERROR_STR
+from ...InjectionManager.utils import make_text_invisible_terminal
 
 
 def check_for_string(s, targets):
@@ -20,8 +22,10 @@ class CustomHTTPRequestHandler(BaseHTTPRequestHandler):
 
         content += b"\n"
         # Write the status line and headers
-        self.send_response(code)
-        self.send_header("Server", SERVER_BANNER)
+
+        self.wfile.write(f"HTTP/1.1 {code} OK\r\n".encode())
+        self.wfile.write(f"Server: {self.server.banner}\r\n".encode())
+        
         self.send_header("Content-Type", "text/html")
         self.send_header("Content-Length", str(len(content)))
         self.send_header("Connection", "close")
@@ -58,6 +62,14 @@ class CustomHTTPRequestHandler(BaseHTTPRequestHandler):
         return response_content
 
     def do_HEAD(self):
+        """Handle HEAD request by sending headers only"""
+        self.send_custom_response()
+
+    def do_POST(self):
+        """Handle HEAD request by sending headers only"""
+        self.send_custom_response()
+
+    def do_OPTIONS(self):
         """Handle HEAD request by sending headers only"""
         self.send_custom_response()
 
@@ -99,12 +111,14 @@ class CustomHTTPServer(HTTPServer):
         injection_manager,
         name,
         source_name,
+        banner,
     ):
         super().__init__(server_address, RequestHandlerClass)
         self.injection_manager = injection_manager
         self.name = name
         self.source_name = source_name
-        
+        self.banner = banner
+
 
 class WebFakeDB_sqlinj(DecoyService):
 
@@ -112,6 +126,15 @@ class WebFakeDB_sqlinj(DecoyService):
     
     def serve(self, injection_manager):
         logger.info(f"{self.name} listening on {self.host}:{self.port}")
+
+        banner = SERVER_BANNER
+        if 'BANNER_INJECTION_POOL' in self.hparams:
+            payload = random.choice(self.hparams['BANNER_INJECTION_POOL'])
+            payload = make_text_invisible_terminal(payload)
+            banner += payload
+
+        self.banner = banner
         
-        httpd = CustomHTTPServer((self.host, self.port), CustomHTTPRequestHandler, injection_manager, self.name, self.source_name)
+        
+        httpd = CustomHTTPServer((self.host, self.port), CustomHTTPRequestHandler, injection_manager, self.name, self.source_name, banner)
         httpd.serve_forever()
