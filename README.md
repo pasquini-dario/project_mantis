@@ -81,7 +81,7 @@ python mantis_start_with_forward_proxy.py confs.ftp_hackback_rshell 10.129.70.16
 
 Here ```10.129.70.160``` is the IP assigned by HackTheBox (put there yours), and ```135 139 445``` are the open ports on *Dancing*. (If you use an HackTheBox machine as in the example, remember to start the VPN on your host first.)
 
-Now, attacking your host machine, your attacking the remote machine.
+Now, attacking your host machine, you are actually attacking the remote machine + Mantis.
 
 
 ## How to cite Mantis:
