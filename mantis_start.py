@@ -3,7 +3,7 @@ import importlib
 
 from Mantis.InjectionManager.default import DefaultInjectionManager
 from Mantis.utils import get_local_ip, get_public_ip
-
+from Mantis.InjectionManager.interface import InterfaceClientRPC
 
 if __name__ == '__main__':
 
@@ -11,6 +11,12 @@ if __name__ == '__main__':
 
     parser.add_argument('conf_file', type=str,
                         help='Path to the configuration file (e.g., confs.ftp_hackback_rshell)')
+
+    parser.add_argument(
+        '--run_rpc_interface',
+        action='store_true',
+        help="Run RPC server for external clients"
+    )
     
     
     # Parse the arguments
@@ -29,3 +35,6 @@ if __name__ == '__main__':
     
     inj_manager.spawn_decoys(conf.DECOYS)
 
+    if args.run_rpc_interface:
+        ic = InterfaceClientRPC(inj_manager)
+        ic()

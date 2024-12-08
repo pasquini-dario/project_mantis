@@ -2,7 +2,7 @@ import random
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
-from .. import DecoyService
+from .. import DecoyService, IS_CURIOUS
 from ...utils.logger import logger
 from . import SERVER_BANNER, SQL_INJECTION_STRINGS, SQL_ERROR_STR
 from ...InjectionManager.utils import make_text_invisible_terminal
@@ -53,6 +53,8 @@ class CustomHTTPRequestHandler(BaseHTTPRequestHandler):
 
         client_address = self.client_address
 
+        self.server.injection_manager.tracker.insert(*client_address, IS_CURIOUS, self.server.source_name)
+
         if check_for_string(username, SQL_INJECTION_STRINGS) or check_for_string(password, SQL_INJECTION_STRINGS):
             response_content = f"""Welcome! Login successful. """.encode()
             response_content, _ = self.server.injection_manager(client_address, self.server.source_name, self.server.name, response_content)
@@ -78,6 +80,8 @@ class CustomHTTPRequestHandler(BaseHTTPRequestHandler):
         parsed_path = urlparse(self.path)
 
         client_ip, client_port = self.client_address
+
+        self.server.injection_manager.tracker.insert(client_ip, client_port, IS_CURIOUS, self.server.source_name)
         logger.info(f"{client_ip} {client_port} connected to the decoy")
         
         if parsed_path.path == "/":

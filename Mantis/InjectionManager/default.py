@@ -22,6 +22,9 @@ class DefaultInjectionManager:
 
 
     def set_target_ip(self, attacker_ip, payload):
+
+        print("--------->", attacker_ip)
+
         # set target ip based on if the attacker is local or external
         if is_private_ip(attacker_ip):
             payload = payload.format(TARGET=self.host_local_ip)
@@ -50,7 +53,9 @@ class DefaultInjectionManager:
         return trigger % payload
 
            
-    def __call__(self, attacker_ip, source, keyword, msg_raw):
+    def __call__(self, attacker, source, keyword, msg_raw):
+
+        attacker_ip, attacker_port = attacker 
 
         if not keyword in self.trigger_events:
             logger.critical(f"Trigger event [{keyword}] issued by [{attacker_ip}] via [{source}]. But no event registered for [{keyword}]!")
@@ -73,6 +78,8 @@ class DefaultInjectionManager:
 
         logger.critical(f"Trigger event [{keyword}] issued by [{attacker_ip}] via [{source}]. Payload injected: [{armed_payload}]")
         
+        self.tracker.add_trigger_event(attacker_ip, attacker_port, keyword, source)
+
         new_msg = fun(msg, keyword, armed_payload, **kargs_fun)
         new_msg = new_msg.encode()
         

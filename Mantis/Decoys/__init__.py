@@ -7,7 +7,7 @@ MAX_THREADS = 2 ** 6
 
 class DecoyService:
 
-    source_name = ''
+    source_name = 'base_class'
     
     def __init__(
         self,
@@ -34,6 +34,9 @@ class DecoyService:
         injection_manager.tracker.remove(*client_address)
         print(injection_manager.tracker.alive)
 
+    def __repr__(self):
+        return f'{self.source_name}'
+
     def serve(self, injection_manager):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
             server_socket.bind((self.host, self.port))
@@ -44,7 +47,7 @@ class DecoyService:
             while True:
                 client_socket, client_address = server_socket.accept()
                 self.semaphore.acquire()
-                injection_manager.tracker.insert(*client_address, IS_CURIOUS, self)
+                injection_manager.tracker.insert(*client_address, IS_CURIOUS, self.source_name)
                 client_thread = threading.Thread(
                     target=self.handle_client,
                     args=(client_socket, client_address, injection_manager)
