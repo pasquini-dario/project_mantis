@@ -23,8 +23,6 @@ class DefaultInjectionManager:
 
     def set_target_ip(self, attacker_ip, payload):
 
-        print("--------->", attacker_ip)
-
         # set target ip based on if the attacker is local or external
         if is_private_ip(attacker_ip):
             payload = payload.format(TARGET=self.host_local_ip)
