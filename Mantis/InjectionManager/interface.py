@@ -16,26 +16,14 @@ class InterfaceClientRPC:
 
 		# register funs
 		self.server.register_function(
-			self.get_events_history,
-			"get_events_history"
+			self.get_interactions,
+			"get_interactions"
 		)
-		self.server.register_function(
-			self.get_alive,
-			"get_alive"
-		)
-		self.server.register_function(
-			self.get_trigger_events_history,
-			"get_trigger_events_history"
-		)
+		
 
-	def get_events_history(self):
-		return self.tracker.trigger_events_history
+	def get_interactions(self):
+		return [user.to_entry() for user in self.tracker.users.values()]
 
-	def get_alive(self):
-		return [user.to_entry() for user in self.tracker.alive.values()]
-
-	def get_trigger_events_history(self):
-		return [te.to_entry() for te in self.tracker.trigger_events_history]
 
 	def __call__(self):
 		print(f"Running RPC server for interface on {self.address}:{self.port}")

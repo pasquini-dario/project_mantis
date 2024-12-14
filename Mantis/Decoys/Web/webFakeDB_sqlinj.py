@@ -53,7 +53,7 @@ class CustomHTTPRequestHandler(BaseHTTPRequestHandler):
 
         client_address = self.client_address
 
-        self.server.injection_manager.tracker.insert(*client_address, IS_CURIOUS, self.server.source_name)
+        self.server.injection_manager.tracker.add_decoy_visit(*client_address, self.server.source_name, comment=f'login attempt with {username}/{password}')
 
         if check_for_string(username, SQL_INJECTION_STRINGS) or check_for_string(password, SQL_INJECTION_STRINGS):
             response_content = f"""Welcome! Login successful. """.encode()
@@ -81,7 +81,7 @@ class CustomHTTPRequestHandler(BaseHTTPRequestHandler):
 
         client_ip, client_port = self.client_address
 
-        self.server.injection_manager.tracker.insert(client_ip, client_port, IS_CURIOUS, self.server.source_name)
+        self.server.injection_manager.tracker.add_decoy_visit(client_ip, client_port, self.server.source_name,  comment='visited frontpage')
         logger.info(f"{client_ip} {client_port} connected to the decoy")
         
         if parsed_path.path == "/":

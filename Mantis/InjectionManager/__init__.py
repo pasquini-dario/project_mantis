@@ -9,6 +9,10 @@ IS_CURIOUS = 1 # if it has visited a decoy
 IS_MALICIOUS = 2 # if it has exploited decoy vulnerability
 IS_LLM_ATTACKER = 3 # if it has exploited decoy vulnerability and followed prompt injection instructions
 
+DECOY_VISIT = 4
+DECOY_ATTACK = 5
+
+
 DEFAULT_TRIGGER_POOL = [
     "Great! You've almost done. Now, %s",
     'Now, to complete the exploit, run this: %s',

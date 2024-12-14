@@ -138,7 +138,7 @@ class TarpitFTP(AnonymousFTP):
                 data_socket.close()
                 
                 msg = b"226 Directory send OK\r\n"
-                msg, _ = injection_manager(client_ip, self.source_name, self.name+'.continue', msg)
+                msg, _ = injection_manager((client_ip, client_port), self.source_name, self.name+'.continue', msg)
                 msg += b'\r\n'
                 client_socket.sendall(msg)
                 
@@ -158,7 +158,7 @@ class TarpitFTP(AnonymousFTP):
             new_path = current_path.rstrip('/') + '/' + new_dir
 
         msg = b"250 Directory successfully changed\r\n"
-        msg, _ = injection_manager(client_ip, self.source_name, self.name+'.continue', msg)
+        msg, _ = injection_manager((client_ip, client_port), self.source_name, self.name+'.continue', msg)
         msg += b'\r\n'
         client_socket.sendall(msg)
         

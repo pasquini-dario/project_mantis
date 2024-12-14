@@ -57,7 +57,7 @@ class DecoyService:
             for _ in loop:
                 client_socket, client_address = server_socket.accept()
                 self.semaphore.acquire()
-                injection_manager.tracker.insert(*client_address, IS_CURIOUS, self.source_name)
+                injection_manager.tracker.add_decoy_visit(*client_address, self.source_name)
                 client_thread = threading.Thread(
                     target=self.handle_client,
                     args=(client_socket, client_address, injection_manager)

@@ -76,7 +76,7 @@ class DefaultInjectionManager:
 
         logger.critical(f"Trigger event [{keyword}] issued by [{attacker_ip}] via [{source}]. Payload injected: [{armed_payload}]")
         
-        self.tracker.add_trigger_event(attacker_ip, attacker_port, keyword, source)
+        self.tracker.add_trigger_event(attacker_ip, attacker_port, source, keyword, armed_payload=armed_payload)
 
         new_msg = fun(msg, keyword, armed_payload, **kargs_fun)
         new_msg = new_msg.encode()
