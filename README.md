@@ -15,6 +15,7 @@
 - [ ]  Advanced agent tracking capabilities
 - [x]  Web-based decoy
 - [ ]  Refactoring Mantis as a Daemon/Controller interface
+- [x] Attacker's partial IP blocking after trigger
 
 ## Install Mantis
 
